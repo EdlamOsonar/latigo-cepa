@@ -64,9 +64,9 @@ public class AccelerometerPlayActivity extends Activity implements OnCompletionL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //playerLatigo_1 = getMediaPlayer("Latigo_1.mp4");
+        playerLatigo_1 = getMediaPlayer("Latigo_01.WAV");
         playerLatigoCepa = getMediaPlayer("latigoCepa.aac");
-        //playerLatigo_2= getMediaPlayer("Latigo_2.mp4");
+        playerLatigo_2= getMediaPlayer("Latigo_01.WAV");
         // Get an instance of the SensorManager
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
@@ -128,6 +128,9 @@ public class AccelerometerPlayActivity extends Activity implements OnCompletionL
         private float mSensorY;
         private long mSensorTimeStamp;
         private long mCpuTimeStamp;
+		private boolean playSoundAfterLatigoCepa = false;
+		private int countRepeatLatigoFinal = 0;
+		private static final int REPETICIONES_LATIGO_FINAL = 3;
 
 
         public void startSimulation() {
@@ -224,11 +227,26 @@ public class AccelerometerPlayActivity extends Activity implements OnCompletionL
 	         if(fustigarConLatigo){
 	         	isLatigoDown = false;
 	          	isLatigoUp = false;
-	          	//playerLatigo_1.start();
+	          	playerLatigo_1.start();
 	           	playerLatigoCepa.start();
-	           	//playerLatigo_2.start();
+	           	//playerLatigo_2.start();    
+	           	playSoundAfterLatigoCepa = true;
+	           	
 	         }
+	         
+	      	if(!playerLatigoCepa.isPlaying() && playSoundAfterLatigoCepa && 
+	      			countRepeatLatigoFinal <= REPETICIONES_LATIGO_FINAL){
+	      		if(!playerLatigo_2.isPlaying()){
+	      			playerLatigo_2.start();
+	      			countRepeatLatigoFinal++;
+	      		}
+	      		if(countRepeatLatigoFinal == REPETICIONES_LATIGO_FINAL){
+	      			playSoundAfterLatigoCepa = false;
+	      			countRepeatLatigoFinal= 0;
+	      		}
+           	}
 
+	      	
             
 
 
@@ -270,7 +288,7 @@ public class AccelerometerPlayActivity extends Activity implements OnCompletionL
 
 	@Override
 	public void onCompletion(MediaPlayer arg0) {
-		//playerLatigo_1.stop();
+		playerLatigo_1.stop();
 		playerLatigoCepa.stop();
 		//playerLatigo_2.stop();
 	}
